@@ -1184,6 +1184,13 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
     Programs should be written in one language, whatever that language may be, as dictated by the maintainer or maintainers.
 
+# Knockout
+
+1. Keep DOM manipulation out of the view model.
+  - jQuery code or any other DOM interactino should be kept out of the view model to keep it easily testable.
+  - Use a custom binding where appropriate to perform DOM interactions
+
+
 ## Appendix
 
 ### Comma First.
