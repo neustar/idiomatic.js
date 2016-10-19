@@ -1,10 +1,10 @@
-# Javascript Style Guide
+# IAS Javascript Style Guide
 
 ## Table of Contents
 
  * [Whitespace](#whitespace)
  * [Beautiful Syntax](#spacing)
- * [Type Checking (Courtesy jQuery Core Style Guidelines)](#type)
+ * [Type Checking](#type)
  * [Conditional Evaluation](#cond)
  * [Practical Style](#practical)
  * [Naming](#naming)
@@ -13,53 +13,42 @@
  * [Comments](#comments)
  * [One Language Code](#language)
 
-
-
 ------------------------------------------------
-
 
 ## Preface
 
 The benefit from using a style guide is consisteny. All code should be indistinguishable in style and appear as it was written by a single person. This improves readabilty and understanding while reducing time spent fixing bugs and maintaining the code.
 
 
-## Idiomatic Style Manifesto
-
+## IAS Style Rules
 
 1. <a name="whitespace">Whitespace</a>
-  - Never mix spaces and tabs.
-  - When beginning a project, before you write any code, choose between soft indents (spaces) or real tabs, consider this **law**.
-      - For readability, I always recommend setting your editor's indent size to two characters &mdash; this means two spaces or two spaces representing a real tab.
+  - indent using 2 spaces, consider this **law**.
   - If your editor supports it, always work with the "show invisibles" setting turned on. The benefits of this practice are:
       - Enforced consistency
       - Eliminating end of line whitespace
       - Eliminating blank line whitespace
       - Commits and diffs that are easier to read
-  - Use [Editorconfig](http://editorconfig.org/) when possible.  It supports most IDEs and handles most whitespace settings.
-
+  - Check if your IDE has plugin support for [editorconfig](http://editorconfig.org/). (Intellij IDEA has built in support). It'll configure your IDE editor settings for 2 space indents.
 
 2. <a name="spacing">Beautiful Syntax</a>
 
-    A. Parens, Braces, Linebreaks
+    A. Spacing, Parens, Braces, Linebreaks
 
-    ```javascript
+     Parens in conditionals and loops. If, else, for, while, and try should always have spaces, braces and span multiple lines in order to encourage readability.
+    
+    ```javascript     
+    // 2.A.1.1 - Spacing for conditionals and loops
+    // eslint: "space-in-parens": ["error", "always"]
 
-    // if/else/for/while/try always have spaces, braces and span multiple lines
-    // this encourages readability
-
-    // 2.A.1.1
-    // Examples of really cramped syntax
-
-    if(condition) doSomething();
+	// Bad
+	if(condition) doSomething();
 
     while(condition) iterating++;
 
     for(var i=0;i<100;i++) someIterativeFn();
 
-
-    // 2.A.1.1
-    // Use whitespace to promote readability
-
+	// Good
     if ( condition ) {
       // statements
     }
@@ -68,66 +57,38 @@ The benefit from using a style guide is consisteny. All code should be indisting
       // statements
     }
 
-    for ( var i = 0; i < 100; i++ ) {
-      // statements
-    }
-
-    // Even better:
-
-    var i,
-      length = 100;
-
-    for ( i = 0; i < length; i++ ) {
-      // statements
-    }
-
-    // Or...
-
-    var i = 0,
-      length = 100;
-
-    for ( ; i < length; i++ ) {
-      // statements
-    }
-
-    var prop;
-
-    for ( prop in object ) {
-      // statements
-    }
-
-
     if ( true ) {
       // statements
     } else {
       // statements
     }
     ```
-
-
+        
+    Function calls and defintions get spaces around parens also. No space is needed for calls without params. Parens to change the order of operation get spaces as well.
+    
+    ```javascript
+	// 2.A.1.2 - Parens in function calls.
+    // eslint: "space-in-parens": ["error", "always"]
+    
+	// Good
+    foo( 'bar' );
+    foo();    
+    
+	var foo = ( 1 + 2 ) * 3;
+	( function () { return 'bar'; }() );
+    
+    function foo () {
+      // statements
+    }    
+    ```
+    
     B. Assignments, Declarations, Functions ( Named, Expression, Constructor )
 
-    ```javascript
-
-    // 2.B.1.1
-    // Variables
-    var foo = "bar",
-      num = 1,
-      undef;
-
-    // Literal notations:
-    var array = [],
-      object = {};
-
-
-    // 2.B.1.2
-    // Using only one `var` per scope (function) or one `var` for each variable,
-    // promotes readability and keeps your declaration list free of clutter.
-    // Using one `var` per variable you can take more control of your versions
-    // and makes it easier to reorder the lines.
-    // One `var` per scope makes it easier to detect undeclared variables
-    // that may become implied globals.
-    // Choose better for your project and never mix them.
+	Use the var keyword for each variable declaration. Declaring unititialized variables are the exception, and can go on a single line.
+    
+	```javascript
+    // 2.B.1.1 - multiple var
+    // eslint one-var: ["warn", {"initialized": "never", "uninitialized": "always"}]	
 
     // Bad
     var foo = "",
@@ -135,51 +96,52 @@ The benefit from using a style guide is consisteny. All code should be indisting
     var qux;
 
     // Good
+    var a, b, c; // unitialized can be declared together
     var foo = "";
     var bar = "";
     var qux;
 
-    // or..
-    var foo = "",
-      bar = "",
-      qux;
-
-    // or..
-    var // Comment on these
-    foo = "",
-    bar = "",
-    quux;
-
-    // 2.B.1.3
-    // var statements should always be in the beginning of their respective scope (function).
-
+	```
+    
+	Declarations using var, const, and let should always be at the top of their respective scope.
+    
+    ```javascript
+    // 2.B.1.2 - vars on top
+    // eslint vars-on-top: "error"
 
     // Bad
-    function foo() {
-
-      // some statements here
-
-      var bar = "",
-        qux;
-    }
-
+    function doSomething() {
+      var first;    
+      if (true) {
+          first = true;
+      }
+      var second;
+	}
+	// Also Bad, variable declaration in for initializer:
+	function doSomething() {
+      for ( var i=0; i < 10; i++ ) {}
+	}    
+        
     // Good
-    function foo() {
-      var bar = "",
-        qux;
-
+    function doSomething() {
+      var first;
+      var second; //multiple declarations are allowed at the top
+    
+      if (true) {
+        first = true;
+      }
       // all statements after the variables declarations.
-    }
+	}
 
     // 2.B.1.4
-    // const and let, from ECMAScript 6, should likewise be at the top of their scope (block).
+    // ES6 features const and let should likewise be at the top of their scope (block).
 
     // Bad
     function foo() {
-      let foo,
-        bar;
+      let foo;
+      let bar;
       if ( condition ) {
-        bar = "";
+        bar = '';
         // statements
       }
     }
@@ -246,7 +208,6 @@ The benefit from using a style guide is consisteny. All code should be indisting
     // 2.B.2.4
     // Constructor Declaration
     function FooBar( options ) {
-
       this.options = options;
     }
 
@@ -292,8 +253,8 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
     D. Consistency Always Wins
 
-    In sections 2.A-2.C, the whitespace rules are set forth as a recommendation with a simpler, higher purpose: consistency.
-    It's important to note that formatting preferences, such as "inner whitespace" should be considered optional, but only one style should exist across the entire source of your project.
+    In sections 2.A-2.C, the whitespace rules are set forth as a way to promote consistency.
+    The important thing is that only one style should exist across the entire source of our project.
 
     ```javascript
 
@@ -321,64 +282,61 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
     E. Quotes
 
-    Whether you prefer single or double shouldn't matter, there is no difference in how JavaScript parses them. What **ABSOLUTELY MUST** be enforced is consistency. **Never mix quotes in the same project. Pick one style and stick with it.**
+    We will use single quotes in all js files. Note that json files require double quotes and are not part of this guide. 
+    There are no exceptions to this rule.
 
     F. End of Lines and Empty Lines
 
-    Whitespace can ruin diffs and make changesets impossible to read. Consider incorporating a pre-commit hook that removes end-of-line whitespace and blanks spaces on empty lines automatically.
+    Whitespace can ruin diffs and make changesets impossible to read. We will eventually create a pre-commit hook that removes end-of-line whitespace and blanks spaces on empty lines automatically. Until then extra whitespace should be removed manually.
 
-3. <a name="type">Type Checking (Courtesy jQuery Core Style Guidelines)</a>
+3. <a name="type">Type Checking</a>
 
-    A. Actual Types
+    A. We will use lodash (https://lodash.com/docs/4.16.4#isArguments) "lang" functions to perform type checking. It covers all common cases and makes the code more readable.
+    
+    Not using Lodash (Don't do this)
 
+	    typeof variable === "string"
+        typeof variable === "number"
+        typeof variable === "boolean"
+
+    Using Lodash (Do this)
     String:
 
-        typeof variable === "string"
+        _.isString( "string" );
 
     Number:
 
-        typeof variable === "number"
+        _.isString( 3 );
 
     Boolean:
-
-        typeof variable === "boolean"
+		
+		_.isBoolean(false);
 
     Object:
 
-        typeof variable === "object"
+        _.isObject({});
 
     Array:
 
-        Array.isArray( arrayLikeObject )
-        (wherever possible)
+        _.isArray([1, 2, 3]);
 
     Node:
 
-        elem.nodeType === 1
+        _.isElement(document.body);
 
     null:
 
-        variable === null
+		_.isNull(null);
 
     null or undefined:
 
-        variable == null
+		_.isNil(null);
 
-    undefined:
+    Property Existence:
 
-      Global Variables:
+		var object = { 'a': 'b': 2 };
+		_.has(object, 'a');
 
-        typeof variable === "undefined"
-
-      Local Variables:
-
-        variable === undefined
-
-      Properties:
-
-        object.prop === undefined
-        object.hasOwnProperty( prop )
-        "prop" in object
 
     B. Coerced Types
 
@@ -447,9 +405,9 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
     // 3.B.2.1
 
-    var number = 1,
-      string = "1",
-      bool = false;
+    var number = 1;
+    var string = "1";
+    var bool = false;
 
     number;
     // 1
@@ -483,9 +441,9 @@ The benefit from using a style guide is consisteny. All code should be indisting
     ```javascript
     // 3.B.2.2
 
-    var number = 1,
-      string = "1",
-      bool = true;
+    var number = 1;
+    var string = "1";
+    var bool = true;
 
     string === number;
     // false
@@ -537,7 +495,6 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
     ```javascript
     // 3.B.2.4
-
 
     var num = 2.5;
 
@@ -638,7 +595,7 @@ The benefit from using a style guide is consisteny. All code should be indisting
     if ( !foo ) ...
 
     // ...Be careful, this will also match: 0, "", null, undefined, NaN
-    // If you _MUST_ test for a boolean false, then use
+    // If you _MUST_ test for a boolean false, then use tripple equals
     if ( foo === false ) ...
 
 
@@ -647,12 +604,8 @@ The benefit from using a style guide is consisteny. All code should be indisting
     // instead of this:
     if ( foo === null || foo === undefined ) ...
 
-    // ...take advantage of == type coercion, like this:
-    if ( foo == null ) ...
-
-    // Remember, using == will match a `null` to BOTH `null` and `undefined`
-    // but not `false`, "" or 0
-    null == undefined
+    // ...take advantage lodash's isNil, like this:
+    if ( _.isNil(foo) ) ...
 
     ```
     ALWAYS evaluate for the best, most accurate result - the above is a guideline, not a dogma.
@@ -662,7 +615,7 @@ The benefit from using a style guide is consisteny. All code should be indisting
     // 4.2.1
     // Type coercion and evaluation notes
 
-    // Prefer `===` over `==` (unless the case requires loose type evaluation)
+    // Prefer lodash type functions over `===`, always avoid truthy evaluation using `==`
 
     // === does not coerce type, which means that:
 
@@ -695,41 +648,30 @@ The benefit from using a style guide is consisteny. All code should be indisting
     ```javascript
 
     // 5.1.1
-    // A Practical Module
+    // A Practical RequireJS Module
+    
+	define( function ( require ) {
+      var ko = require( 'knockout' );
+      require( 'viewmodel' );
 
-    (function( global ) {
-      var Module = (function() {
+      var dataVizColors = ['#008ACB', '#9CD59B'];
 
-        var data = "secret";
+      return {
+        
+        dataVizColors: dataVizColors,
 
-        return {
-          // This is some boolean property
-          bool: true,
-          // Some string value
-          string: "a string",
-          // An array property
-          array: [ 1, 2, 3, 4 ],
-          // An object property
-          object: {
-            lang: "en-Us"
-          },
-          getData: function() {
-            // get the current value of `data`
-            return data;
-          },
-          setData: function( value ) {
-            // set the value of `data` and return it
-            return ( data = value );
-          }
-        };
-      })();
+        observableStringToBoolean: function observableStringToBoolean( observable ) {
+          var value = observable();
+          observable( value === 'true' );
+        },
 
-      // Other things might happen here
-
-      // expose our module to the global object
-      global.Module = Module;
-
-    })( this );
+    	observableBooleanToString: function observableBooleanToString( observable ) {
+	      var value = observable();
+          observable( value ? 'true' : 'false' );
+        }
+        
+      };
+	} );    		
 
     ```
 
@@ -738,34 +680,33 @@ The benefit from using a style guide is consisteny. All code should be indisting
     // 5.2.1
     // A Practical Constructor
 
-    (function( global ) {
+define( function ( require ) {
+    var $ = require( 'jquery' );
+    var ko = require( 'knockout' );
+    var viewmodel = require( 'viewmodel' );
+    var bb = require( 'bluebird-utils' );
+    var iasUtils = require( 'ias-utils' );
+    var time = require( 'time' );
+    
 
-      function Ctor( foo ) {
+    function TicketBanner( params ) {
+        var self = this;
+        self.ticket = params.ticket;
 
-        this.foo = foo;
+        self.isAssignee = function () {
+            return self.ticket.assigned_to() === userName;
+        };
 
-        return this;
-      }
+        self.masq = function () {
+            var masqUrl = '/account/masq?&url=/ddos/config/{service}&account_id={accountId}'
+                    .replace( '{service}', self.ticket.service() )
+                    .replace( '{accountId}', accountID );
+            window.open( masqUrl );
+        };
+    }
 
-      Ctor.prototype.getFoo = function() {
-        return this.foo;
-      };
-
-      Ctor.prototype.setFoo = function( val ) {
-        return ( this.foo = val );
-      };
-
-
-      // To call constructor's without `new`, you might do this:
-      var ctor = function( foo ) {
-        return new Ctor( foo );
-      };
-
-
-      // expose our constructor to the global object
-      global.ctor = ctor;
-
-    })( this );
+    return TicketBanner;
+} );
 
     ```
 
@@ -775,7 +716,7 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
 
 
-    A. You are not a human code compiler/compressor, so don't try to be one.
+    A. You are not a human code compiler/compressor, so don't try to be one. Use descriptive names to help document the code. Prefer to spell out names and 		avoid abbreviations.
 
     The following code is an example of egregious naming:
 
@@ -804,15 +745,14 @@ The benefit from using a style guide is consisteny. All code should be indisting
       return document.querySelectorAll( selector );
     }
 
-    var idx = 0,
-      elements = [],
-      matches = query("#foo"),
-      length = matches.length;
+    var index = 0;
+    var elements = [];
+    var matches = query( "#foo" );
+    var length = matches.length;
 
-    for ( ; idx < length; idx++ ) {
-      elements.push( matches[ idx ] );
-    }
-
+	_.each( matches, function ( match ){
+	  elements.push( matches[ index ] );	
+	});
     ```
 
     A few additional naming pointers:
@@ -820,7 +760,7 @@ The benefit from using a style guide is consisteny. All code should be indisting
     ```javascript
 
     // 6.A.3.1
-    // Naming strings
+    // Naming strings. Plural and singular names should inciate types. A plural name should inciate a array, singular names a string or object.
 
     `dog` is a string
 
@@ -920,43 +860,6 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
       }, this), opts.freq || 100 );
     }
-
-    // eg. jQuery.proxy
-    function Device( opts ) {
-
-      this.value = null;
-
-      stream.read( opts.path, jQuery.proxy(function( data ) {
-
-        this.value = data;
-
-      }, this) );
-
-      setInterval( jQuery.proxy(function() {
-
-        this.emit("event");
-
-      }, this), opts.freq || 100 );
-    }
-
-    // eg. dojo.hitch
-    function Device( opts ) {
-
-      this.value = null;
-
-      stream.read( opts.path, dojo.hitch( this, function( data ) {
-
-        this.value = data;
-
-      }) );
-
-      setInterval( dojo.hitch( this, function() {
-
-        this.emit("event");
-
-      }), opts.freq || 100 );
-    }
-
     ```
 
     As a last resort, create an alias to `this` using `self` as an Identifier. This is extremely bug prone and should be avoided whenever possible.
@@ -1044,92 +947,10 @@ The benefit from using a style guide is consisteny. All code should be indisting
         // something to default to
         break;
     }
-
-    // 7.A.1.2
-    // A alternate approach that supports composability and reusability is to
-    // use an object to store "cases" and a function to delegate:
-
-    var cases, delegator;
-
-    // Example returns for illustration only.
-    cases = {
-      alpha: function() {
-        // statements
-        // a return
-        return [ "Alpha", arguments.length ];
-      },
-      beta: function() {
-        // statements
-        // a return
-        return [ "Beta", arguments.length ];
-      },
-      _default: function() {
-        // statements
-        // a return
-        return [ "Default", arguments.length ];
-      }
-    };
-
-    delegator = function() {
-      var args, key, delegate;
-
-      // Transform arguments list into an array
-      args = [].slice.call( arguments );
-
-      // shift the case key from the arguments
-      key = args.shift();
-
-      // Assign the default case handler
-      delegate = cases._default;
-
-      // Derive the method to delegate operation to
-      if ( cases.hasOwnProperty( key ) ) {
-        delegate = cases[ key ];
-      }
-
-      // The scope arg could be set to something specific,
-      // in this case, |null| will suffice
-      return delegate.apply( null, args );
-    };
-
-    // 7.A.1.3
-    // Put the API in 7.A.1.2 to work:
-
-    delegator( "alpha", 1, 2, 3, 4, 5 );
-    // [ "Alpha", 5 ]
-
-    // Of course, the `case` key argument could easily be based
-    // on some other arbitrary condition.
-
-    var caseKey, someUserInput;
-
-    // Possibly some kind of form input?
-    someUserInput = 9;
-
-    if ( someUserInput > 10 ) {
-      caseKey = "alpha";
-    } else {
-      caseKey = "beta";
-    }
-
-    // or...
-
-    caseKey = someUserInput > 10 ? "alpha" : "beta";
-
-    // And then...
-
-    delegator( caseKey, someUserInput );
-    // [ "Beta", 1 ]
-
-    // And of course...
-
-    delegator();
-    // [ "Default", 0 ]
-
-
     ```
 
-    B. Early returns promote code readability with negligible performance difference
+    B. Return at the start of a function or the end, but not in the middle. Use a guard to return if a condition is not met, otherwise return
+       at the end of the function. This keeps return points predictable and easy to debug.
 
     ```javascript
 
@@ -1137,16 +958,23 @@ The benefit from using a style guide is consisteny. All code should be indisting
     // Bad:
     function returnLate( foo ) {
       var ret;
-
-      if ( foo ) {
-        ret = "foo";
-      } else {
-        ret = "quux";
+      
+      // guards can return early
+      if( !foo ) {
+        return;
       }
+
+      if ( foo.a ) {
+        ret = "fooa";
+      } else {
+        ret = "foo";
+      }
+      
+	  // return at end of function
       return ret;
     }
 
-    // Good:
+    // Bad:
 
     function returnEarly( foo ) {
 
@@ -1163,7 +991,7 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
     The basic principle here is:
 
-    ### Don't do stupid shit and everything will be ok.
+    ### Don't do stupid stuff and everything will be ok.
 
     To reinforce this concept, please watch the following presentation:
 
@@ -1184,11 +1012,25 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
     Programs should be written in one language, whatever that language may be, as dictated by the maintainer or maintainers.
 
-# Knockout
 
-1. Keep DOM manipulation out of the view model.
-  - jQuery code or any other DOM interactino should be kept out of the view model to keep it easily testable.
-  - Use a custom binding where appropriate to perform DOM interactions
+# IAS Architecture Guide
+
+1. Knockout
+  A. DOM Interactions. 
+  	- Minimize DOM interaction as much as possible by letting KO do it. Bindings should insulate much of the viewmodel code from using the DOM. The idea
+  	  is to interact with observables, read and write to those, and then let KO interact with the view.
+  	  
+  	- When you do have to work with the DOM, do it using a custom binding. This keeps DOM interactions isolated to a certain layer of our application. JQuery plugins should be wrapped in custom bindings.
+
+  B. Components.
+    - Use componets as a way to share js and html across different pages and different portals.
+    
+    - Sizing is entirely subjective, but aim for the Golldilock size. This means components aren't too big or too small. Components that are too big couple together the pages that use them. The pages then become less flexible to changes since they are forced to change together. Using smaller components increases the chance that page specific changes could be made independently, if needed. If components are too small they require more work to create and manage and the benefit of using them is diminished.
+    
+    - Names should follow a common convention. PATHS or PACKAGES?
+    
+    - Components should communicate among each other in a standarized way. We plan to implement a pub/sub framework but haven't yet. For the time being, observables can be passed to children components or jQuery events can be used for wider component communcation.
+    	
 
 
 ## Appendix
@@ -1196,6 +1038,11 @@ The benefit from using a style guide is consisteny. All code should be indisting
 ### Comma First.
 
 Any project that cites this document as its base style guide will not accept comma first code formatting, unless explicitly specified otherwise by that project's author.
+
+
+### Editing markdown
+
+Here's a good gitlab flavored markdown editor. https://jbt.github.io/markdown-editor/
 
 
 
