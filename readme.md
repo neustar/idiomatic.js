@@ -23,7 +23,7 @@ The benefit from using a style guide is consisteny. All code should be indisting
 ## IAS Style Rules
 
 1. <a name="whitespace">Whitespace</a>
-  - indent using 2 spaces, consider this **law**.
+  - indent using 2 spaces.
   - If your editor supports it, always work with the "show invisibles" setting turned on. The benefits of this practice are:
       - Enforced consistency
       - Eliminating end of line whitespace
@@ -84,7 +84,7 @@ The benefit from using a style guide is consisteny. All code should be indisting
     
     B. Assignments, Declarations, Functions ( Named, Expression, Constructor )
 
-	Use the var keyword for each variable declaration. Declaring unititialized variables are the exception, and can go on a single line.
+	Use the var keyword for each variable declaration. Declaring unititialized variables are the exception, and should go on a single line.
     
 	```javascript
     // 2.B.1.1 - multiple var
@@ -133,9 +133,14 @@ The benefit from using a style guide is consisteny. All code should be indisting
       // all statements after the variables declarations.
 	}
 
-    // 2.B.1.4
-    // ES6 features const and let should likewise be at the top of their scope (block).
-
+	```
+    
+    Const and let, from ES6, should likewise be at the top of their scope (block).
+    
+    ```javascript
+    // 2.B.1.4 - let on top
+    // eslint vars-on-top: "error"
+    
     // Bad
     function foo() {
       let foo;
@@ -156,7 +161,6 @@ The benefit from using a style guide is consisteny. All code should be indisting
     ```
 
     ```javascript
-
     // 2.B.2.1
     // Named Function Declaration
     function foo( arg1, argN ) {
@@ -216,16 +220,14 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
     fooBar.options;
     // { a: "alpha" }
-
     ```
-
 
     C. Exceptions, Slight Deviations
 
     ```javascript
-
     // 2.C.1.1
     // Functions with callbacks
+    
     foo(function() {
       // Note there is no extra space between the first paren
       // of the executing function call and the word "function"
@@ -248,7 +250,6 @@ The benefit from using a style guide is consisteny. All code should be indisting
     if ( !("foo" in obj) ) {
       obj = (obj.bar || defaults).baz;
     }
-
     ```
 
     D. Consistency Always Wins
@@ -256,38 +257,13 @@ The benefit from using a style guide is consisteny. All code should be indisting
     In sections 2.A-2.C, the whitespace rules are set forth as a way to promote consistency.
     The important thing is that only one style should exist across the entire source of our project.
 
-    ```javascript
-
-    // 2.D.1.1
-
-    if (condition) {
-      // statements
-    }
-
-    while (condition) {
-      // statements
-    }
-
-    for (var i = 0; i < 100; i++) {
-      // statements
-    }
-
-    if (true) {
-      // statements
-    } else {
-      // statements
-    }
-
-    ```
-
     E. Quotes
 
     We will use single quotes in all js files. Note that json files require double quotes and are not part of this guide. 
-    There are no exceptions to this rule.
 
     F. End of Lines and Empty Lines
 
-    Whitespace can ruin diffs and make changesets impossible to read. We will eventually create a pre-commit hook that removes end-of-line whitespace and blanks spaces on empty lines automatically. Until then extra whitespace should be removed manually.
+    Whitespace can ruin diffs and make changesets impossible to read.
 
 3. <a name="type">Type Checking</a>
 
@@ -300,39 +276,28 @@ The benefit from using a style guide is consisteny. All code should be indisting
         typeof variable === "boolean"
 
     Using Lodash (Do this)
-    String:
+    
+    The following examples are for String, Number, Boolean, Object, Array, Element, and null.
 
         _.isString( "string" );
 
-    Number:
-
         _.isString( 3 );
 
-    Boolean:
-		
 		_.isBoolean(false);
-
-    Object:
 
         _.isObject({});
 
-    Array:
-
         _.isArray([1, 2, 3]);
-
-    Node:
 
         _.isElement(document.body);
 
-    null:
-
 		_.isNull(null);
 
-    null or undefined:
+	Check for null or undefined, use isNil.
 
 		_.isNil(null);
 
-    Property Existence:
+    Check for object properties with has.
 
 		var object = { 'a': 'b': 2 };
 		_.has(object, 'a');
@@ -349,10 +314,9 @@ The benefit from using a style guide is consisteny. All code should be indisting
     <input type="text" id="foo-input" value="1">
 
     ```
-
+    and this javascript..
 
     ```javascript
-
     // 3.B.1.1
 
     // `foo` has been declared with the value `0` and its type is `number`
@@ -371,13 +335,10 @@ The benefit from using a style guide is consisteny. All code should be indisting
     // This means that if you had logic that tested `foo` like:
 
     if ( foo === 1 ) {
-
       importantTask();
-
     }
 
     // `importantTask()` would never be evaluated, even though `foo` has a value of "1"
-
 
     // 3.B.1.2
 
@@ -390,16 +351,13 @@ The benefit from using a style guide is consisteny. All code should be indisting
     // "number"
 
     if ( foo === 1 ) {
-
       importantTask();
-
     }
 
     // `importantTask()` will be called
     ```
 
     Here are some common cases along with coercions:
-
 
     ```javascript
 
@@ -529,18 +487,12 @@ The benefit from using a style guide is consisteny. All code should be indisting
     neg >>> 0;
 
     // Will result in 4294967294
-
-
-
-
     ```
-
 
 
 4. <a name="cond">Conditional Evaluation</a>
 
     ```javascript
-
     // 4.1.1
     // When only evaluating that an array has length,
     // instead of this:
@@ -606,12 +558,12 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
     // ...take advantage lodash's isNil, like this:
     if ( _.isNil(foo) ) ...
-
     ```
+    
+    
     ALWAYS evaluate for the best, most accurate result - the above is a guideline, not a dogma.
 
     ```javascript
-
     // 4.2.1
     // Type coercion and evaluation notes
 
@@ -627,7 +579,6 @@ The benefit from using a style guide is consisteny. All code should be indisting
     "1" == 1;
     // true
 
-
     // 4.2.2
     // Booleans, Truthies & Falsies
 
@@ -639,14 +590,12 @@ The benefit from using a style guide is consisteny. All code should be indisting
 
     // Falsy:
     "", 0, null, undefined, NaN, void 0
-
     ```
 
 
 5. <a name="practical">Practical Style</a>
 
     ```javascript
-
     // 5.1.1
     // A Practical RequireJS Module
     
@@ -672,41 +621,39 @@ The benefit from using a style guide is consisteny. All code should be indisting
         
       };
 	} );    		
-
     ```
 
     ```javascript
-
     // 5.2.1
     // A Practical Constructor
 
-define( function ( require ) {
-    var $ = require( 'jquery' );
-    var ko = require( 'knockout' );
-    var viewmodel = require( 'viewmodel' );
-    var bb = require( 'bluebird-utils' );
-    var iasUtils = require( 'ias-utils' );
-    var time = require( 'time' );
-    
+      define( function ( require ) {
+          var $ = require( 'jquery' );
+          var ko = require( 'knockout' );
+          var viewmodel = require( 'viewmodel' );
+          var bb = require( 'bluebird-utils' );
+          var iasUtils = require( 'ias-utils' );
+          var time = require( 'time' );
 
-    function TicketBanner( params ) {
-        var self = this;
-        self.ticket = params.ticket;
 
-        self.isAssignee = function () {
-            return self.ticket.assigned_to() === userName;
-        };
+          function TicketBanner( params ) {
+              var self = this;
+              self.ticket = params.ticket;
 
-        self.masq = function () {
-            var masqUrl = '/account/masq?&url=/ddos/config/{service}&account_id={accountId}'
-                    .replace( '{service}', self.ticket.service() )
-                    .replace( '{accountId}', accountID );
-            window.open( masqUrl );
-        };
-    }
+              self.isAssignee = function () {
+                  return self.ticket.assigned_to() === userName;
+              };
 
-    return TicketBanner;
-} );
+              self.masq = function () {
+                  var masqUrl = '/account/masq?&url=/ddos/config/{service}&account_id={accountId}'
+                          .replace( '{service}', self.ticket.service() )
+                          .replace( '{accountId}', accountID );
+                  window.open( masqUrl );
+              };
+          }
+
+          return TicketBanner;
+      } );
 
     ```
 
@@ -714,14 +661,11 @@ define( function ( require ) {
 
 6. <a name="naming">Naming</a>
 
-
-
     A. You are not a human code compiler/compressor, so don't try to be one. Use descriptive names to help document the code. Prefer to spell out names and 		avoid abbreviations.
 
     The following code is an example of egregious naming:
 
     ```javascript
-
     // 6.A.1.1
     // Example of code with poor names
 
@@ -737,7 +681,6 @@ define( function ( require ) {
     Here's the same piece of logic, but with kinder, more thoughtful naming (and a readable structure):
 
     ```javascript
-
     // 6.A.2.1
     // Example of code with improved names
 
@@ -756,14 +699,13 @@ define( function ( require ) {
     ```
 
     A few additional naming pointers:
-
+    
     ```javascript
-
     // 6.A.3.1
-    // Naming strings. Plural and singular names should inciate types. A plural name should inciate a array, singular names a string or object.
+    // Naming strings. Plural and singular names should inciate types. 
+    // A plural name should inciate a array, singular names a string or object.
 
     `dog` is a string
-
 
     // 6.A.3.2
     // Naming arrays
@@ -798,7 +740,6 @@ define( function ( require ) {
     EnumNamesLikeThis;
     methodNamesLikeThis;
     SYMBOLIC_CONSTANTS_LIKE_THIS;
-
     ```
 
     B. Faces of `this`
@@ -806,19 +747,15 @@ define( function ( require ) {
     Beyond the generally well known use cases of `call` and `apply`, always prefer `.bind( this )` or a functional equivalent, for creating `BoundFunction` definitions for later invocation. Only resort to aliasing when no preferable option is available.
 
     ```javascript
-
     // 6.B.1
     function Device( opts ) {
-
       this.value = null;
 
       // open an async stream,
       // this will be called continuously
       stream.read( opts.path, function( data ) {
 
-        // Update this instance's current value
-        // with the most recent value from the
-        // data stream
+        // Update this instance's current value with the most recent value from the data stream
         this.value = data;
 
       }.bind(this) );
@@ -839,11 +776,10 @@ define( function ( require ) {
 
     When unavailable, functional equivalents to `.bind` exist in many modern JavaScript libraries.
 
-
     ```javascript
     // 6.B.2
-
     // eg. lodash/underscore, _.bind()
+    
     function Device( opts ) {
 
       this.value = null;
@@ -865,7 +801,6 @@ define( function ( require ) {
     As a last resort, create an alias to `this` using `self` as an Identifier. This is extremely bug prone and should be avoided whenever possible.
 
     ```javascript
-
     // 6.B.3
 
     function Device( opts ) {
@@ -885,16 +820,13 @@ define( function ( require ) {
 
       }, opts.freq || 100 );
     }
-
     ```
-
 
     C. Use `thisArg`
 
     Several prototype methods of ES 5.1 built-ins come with a special `thisArg` signature, which should be used whenever possible
 
     ```javascript
-
     // 6.C.1
 
     var obj;
@@ -932,7 +864,6 @@ define( function ( require ) {
     https://github.com/rwldrn/idiomatic.js/issues/13
 
     ```javascript
-
     // 7.A.1.1
     // An example switch statement
 
@@ -953,9 +884,8 @@ define( function ( require ) {
        at the end of the function. This keeps return points predictable and easy to debug.
 
     ```javascript
-
     // 7.B.1.1
-    // Bad:
+    // Good:
     function returnLate( foo ) {
       var ret;
       
@@ -975,7 +905,6 @@ define( function ( require ) {
     }
 
     // Bad:
-
     function returnEarly( foo ) {
 
       if ( foo ) {
@@ -983,7 +912,6 @@ define( function ( require ) {
       }
       return "quux";
     }
-
     ```
 
 
